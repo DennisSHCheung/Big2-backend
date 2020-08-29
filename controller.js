@@ -56,7 +56,7 @@ const preventDuplicateName = (name, roomId) => {
     for (let i = 0; i < players.length; i++) {
         if (name === players[i].getName()) {
             name += "1";
-            setName(name, roomId);
+            preventDuplicateName(name, roomId);
         }
     }
     return name;

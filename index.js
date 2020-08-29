@@ -20,8 +20,8 @@ io.on("connect", (socket) => {
     })
 
     /*  Called when the user creates a room */
-    socket.on("create room", (name) => {
-        socket.emit("create room", controller.createRoom(socket, name));
+    socket.on("create room", (msg) => {
+        socket.emit("create room", controller.createRoom(socket, msg));
     });
 
     /*  Called when the user attempts to join a room  */
