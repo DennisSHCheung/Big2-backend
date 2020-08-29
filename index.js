@@ -17,6 +17,6 @@ io.on("connect", (socket) => {
     });
 });
 
-router.get('/', (req, res) => { res.status(200); });
+router.get('/', (req, res) => { return res.status(200); });
 
 server.listen(port, () => { console.log(`Listening on port: ${port}`); });
