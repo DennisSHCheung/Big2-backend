@@ -43,10 +43,10 @@ const joinRoom = (socket, msg) => {
 
     let i = getRoomIndex(code);
     if (i === -1) {
-        res.name[0] = "Does not exist";
+        res.name.push("Does not exist");
         return res;  // Room code does not exist
     }  else if (roomsList[i].isFull()) {
-        res.name[0] = "Full";
+        res.name.push("Full");
         return res;
     }
 
