@@ -41,19 +41,19 @@ const createRoom = (socket, name) => {
 const joinRoom = (socket, msg) => {
     let { name, code } = msg;
     let res = { status: "Failed", code: code, name: "" };
+
     let i = getRoomIndex(code);
     if (i === -1) {
         res.name = "Does not exist";
         return res;  // Room code does not exist
-    }
-    let j = getPlayerndex(socket);
-    name = preventDuplicateName(name, i);
-    playersList[j].setName(name);
-
-    if (roomsList[i].isFull()) {
+    }  else if (roomsList[i].isFull()) {
         res.name = "Full";
         return res;
     }
+
+    name = preventDuplicateName(name, i);
+    let j = getPlayerndex(socket);
+    playersList[j].setName(name);
     roomsList[i].joinRoom(playersList[j]);
     socket.join(code);  // Joins a socket room based on the code
     res.status = "Ok";
