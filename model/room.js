@@ -13,6 +13,14 @@ class Room {
         return this.playersList.length;
     }
 
+    getNames() {
+        var names = [];
+        for (let i = 0; i < this.playersList.length; i++) {
+            names.push(this.playersList[i].getName());
+        }
+        return names;
+    }
+
     getPlayers() {
         return this.playersList;
     }
