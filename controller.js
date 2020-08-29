@@ -47,8 +47,7 @@ const joinRoom = (socket, msg) => {
     if (roomsList[i].isFull()) return "Failed";
     roomsList[i].joinRoom(playersList[j]);
     socket.join(code);  // Joins a socket room based on the code
-    socket.to(code).emit("new player", "A new player joined!"); // A notification message to other players in the same room
-    return "Ok";
+    return code;
 }
 
 /* --------------------- Helper functions ---------------------*/
