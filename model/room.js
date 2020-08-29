@@ -22,13 +22,11 @@ class Room {
     }
 
     joinRoom(player) {
-        if (isFull()) return "Failed";
         this.playersList.push(player);
-        return "Ok";
     }
 
     leaveRoom(player) {
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < this.playersList.length; i++) {
             if (player.getName() === this.playersList[i].getName()) {
                 this.playersList.splice(i, 1);
                 return "Ok";
