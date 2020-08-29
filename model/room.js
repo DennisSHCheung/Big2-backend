@@ -1,8 +1,8 @@
 class Room {
-    constructor(code, player) {
+    constructor(code, socket) {
         this.code = code;
-        this.playersList = [];
-        this.playersList.push(player);
+        this.socketsList = [];
+        this.socketsList.push(socket);
     }
 
     getCode() {
@@ -10,38 +10,34 @@ class Room {
     }
 
     getRoomSize() {
-        return this.playersList.length;
+        return this.socketsList.length;
     }
 
     getNames() {
         var names = [];
-        for (let i = 0; i < this.playersList.length; i++) {
-            names.push(this.playersList[i].getName());
+        for (let i = 0; i < this.socketsList.length; i++) {
+            names.push(this.playersList[i].name);
         }
         return names;
     }
 
-    getPlayers() {
-        return this.playersList;
-    }
-
     isFull() {
-        return this.playersList.length === 4;
+        return this.socketsList.length === 4;
     }
 
-    joinRoom(player) {
-        this.playersList.push(player);
+    joinRoom(soket) {
+        this.socketsList.push(socket);
     }
 
-    leaveRoom(player) {
-        for (let i = 0; i < this.playersList.length; i++) {
-            if (player.getName() === this.playersList[i].getName()) {
-                this.playersList.splice(i, 1);
-                return "Ok";
-            }
-        }
-        return "Failed";
-    }
+    // leaveRoom(player) {
+    //     for (let i = 0; i < this.playersList.length; i++) {
+    //         if (player.getName() === this.playersList[i].getName()) {
+    //             this.playersList.splice(i, 1);
+    //             return "Ok";
+    //         }
+    //     }
+    //     return "Failed";
+    // }
 }
 
 module.exports = {
