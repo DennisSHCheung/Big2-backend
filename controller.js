@@ -26,11 +26,8 @@ const createRoom = (socket, name) => {
     let i = getPlayerIndex(socket);
     playersList[i].setName(name);
     var code = crypto.randomBytes(3).toString("Hex");
-    for (let j = 0; j < roomsList.length; j++) {
-        if (roomsList[j].code === code) {
-            code = crypto.randomBytes(3).toString("Hex");
-        }
-    }
+    code = preventDuplicateCode(code);
+
     console.log("Code: ", code);
     var newRoom = new room.Room(code, playersList[i]);
     roomsList.push(newRoom);
@@ -64,6 +61,16 @@ const preventDuplicateName = (name, roomId) => {
         }
     }
     return name;
+}
+
+const preventDuplicateCode = (code) => {
+    for (let j = 0; j < roomsList.length; j++) {
+        if (roomsList[j].code === code) {
+            code = crypto.randomBytes(3).toString("Hex");
+            preventDuplicateCode(code);
+        }
+    }
+    return code;
 }
 
 const getPlayerIndex = (socket) => {
