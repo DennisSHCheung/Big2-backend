@@ -1,11 +1,15 @@
 class Player {
-    constructor(name) {
-        this.username = name;
+    constructor() {
+        this.username = "";
         this.hand = [];
     }
 
     getName() {
         return this.username;
+    }
+
+    setName(name) {
+        this.username = name;
     }
 }
 
