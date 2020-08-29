@@ -20,17 +20,17 @@ io.on("connect", (socket) => {
     })
 
     /*  Called when the user creates a room */
-    socket.on("create room", (msg) => {
-        socket.emit("create room", controller.createRoom(socket, msg));
+    socket.on("create room", (name) => {
+        socket.emit("create room", controller.createRoom(socket, name));
     });
 
     /*  Called when the user attempts to join a room  */
     socket.on("join room", (msg) => {
         let response = controller.joinRoom(msg);
         socket.emit("join room", response);
-        if (response !== "Failed") {
+        if (response.status !== "Failed") {
             // A notification message to all other players in the same room
-            socket.to(code).emit("new player", "A new player joined!"); 
+            socket.to(code).emit("new player", response); 
         }
     })
 });
