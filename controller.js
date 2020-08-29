@@ -1,71 +1,82 @@
 const crypto = require("crypto");
-const player = require("./model/player");
 const room = require("./model/room");
 
-var playersList = [];
 var roomsList = [];
 
-/*  Create a default player for the user and store both the socket and the player upon initial connection   */
-const storeSocket = (socket) => {
-    var newPlayer = new player.Player(socket);
-    playersList.push(newPlayer);
+/*  Attach variables to the socket object for the user upon initial connection   */
+const initSocket = (socket) => {
+    socket.name = "";
+    socket.hand = [];
     console.log("New Client!");
 }
 
-/*  Remove the corresponding socket and player object from the list upon disconnection   */
+/*  Remove the corresponding socket from the list upon disconnection   */
 const deleteSocket = (socket) => {
-    let i = getPlayerIndex(socket);
-    playersList.splice(i, 1);
-    console.log("Removed client's socket ", i);
+    console.log("Removed a client's socket");
 }
 
-/*  Create a room based on the socket and set the associated player object's name to input name. 
-    Create a random code for the room code and it is checked to prevent duplicates. 
-    Create a socket room provided by socket io to emit messages only to players in the same room */
+/*  Room's code is randomly generated and it is checked to prevent duplicates. 
+    Create a socket room provided by socket io  */
 const createRoom = (socket, name) => {
-    let i = getPlayerIndex(socket);
-    playersList[i].setName(name);
+    socket.name = name;
     var code = crypto.randomBytes(3).toString("Hex");
     code = preventDuplicateCode(code);
 
     console.log("Code: ", code);
-    var newRoom = new room.Room(code, playersList[i]);
+    var newRoom = new room.Room(code, socket);
     roomsList.push(newRoom);
-    socket.join(code);  // Creates a socket room based on the code
+    socket.join(code);  // Create a socket room based on the code
     let res = { status: "Ok", code: code };
     return res;
 }
 
-/*  Join the room if room code exists. Also check duplicate names against players in the room. 
-    Join the socket room created by the host */
+/*  Join room and the socket room if room code exists. 
+    Also check input name against players' names in the room to avoid duplication.  */
 const joinRoom = (socket, msg) => {
     let { name, code } = msg;
-    let res = { status: "Failed", code: code, name: "" };
+    let res = { status: "Failed", code: code, name: [] };
 
     let i = getRoomIndex(code);
     if (i === -1) {
-        res.name = "Does not exist";
+        res.name.push("Does not exist");
         return res;  // Room code does not exist
     }  else if (roomsList[i].isFull()) {
-        res.name = "Full";
+        res.name.push("Full");
         return res;
     }
 
     name = preventDuplicateName(name, i);
-    let j = getPlayerndex(socket);
-    playersList[j].setName(name);
-    roomsList[i].joinRoom(playersList[j]);
+    socket.name = name;
+    roomsList[i].joinRoom(socket);
     socket.join(code);  // Joins a socket room based on the code
     res.status = "Ok";
-    res.name = name;
+    res.name = roomsList[i].getNames();
     return res;
 }
 
+/*  Leave room and socket room if room code exists.
+    Remove the room from roomsList if there are no more active players in the room  */
+// const leaveRoom = (socket, msg) => {
+//     let { name, code } = msg;
+//     let i = getRoomIndex(code);
+//     if (i === -1) {
+//         return "Failed";
+//     }
+
+//     let j = getPlayerIndex(socket);
+//     roomsList[i].leaveRoom(playersList[j]);
+//     if (roomsList[i].getRoomSize() === 0) { // No more active players in the room
+//         roomsList.splice(i, 1);
+//     }
+//     socket.leave(code);
+//     return "Ok";
+// }
+
 /* --------------------- Helper functions ---------------------*/
 const preventDuplicateName = (name, roomId) => {
-    let players = roomsList[roomId].getPlayers();
-    for (let i = 0; i < players.length; i++) {
-        if (name === players[i].getName()) {
+    let names = roomsList[roomId].getNames();
+    for (let i = 0; i < names.length; i++) {
+        if (name === names[i]) {
             name += "1";
             preventDuplicateName(name, roomId);
         }
@@ -83,15 +94,6 @@ const preventDuplicateCode = (code) => {
     return code;
 }
 
-const getPlayerIndex = (socket) => {
-    for (let i = 0; i < playersList.length; i++) {
-        if (playersList[i].getSocket() === socket) {
-            return i;
-        }
-    }
-    return -1;
-}
-
 const getRoomIndex = (code) => {
     for (let i = 0; i < roomsList.length; i++) {
         if (code === roomsList[i].getCode()) {
@@ -102,7 +104,7 @@ const getRoomIndex = (code) => {
 }
 
 module.exports = {
-    storeSocket,
+    initSocket,
     deleteSocket,
     createRoom,
     joinRoom
