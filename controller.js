@@ -32,22 +32,33 @@ const createRoom = (socket, name) => {
     var newRoom = new room.Room(code, playersList[i]);
     roomsList.push(newRoom);
     socket.join(code);  // Creates a socket room based on the code
-    return "Ok";
+    let res = { status: "Ok", code: code };
+    return res;
 }
 
 /*  Join the room if room code exists. Also check duplicate names against players in the room. 
     Join the socket room created by the host */
 const joinRoom = (socket, msg) => {
     let { name, code } = msg;
+    let res = { status: "Failed", code: code, name: "" };
     let i = getRoomIndex(code);
-    if (i === -1) return "Failed";  // Room code does not exist
+    if (i === -1) {
+        res.name = "Does not exist";
+        return res;  // Room code does not exist
+    }
     let j = getPlayerndex(socket);
     name = preventDuplicateName(name, i);
+    playersList[j].setName(name);
 
-    if (roomsList[i].isFull()) return "Failed";
+    if (roomsList[i].isFull()) {
+        res.name = "Full";
+        return res;
+    }
     roomsList[i].joinRoom(playersList[j]);
     socket.join(code);  // Joins a socket room based on the code
-    return code;
+    res.status = "Ok";
+    res.name = name;
+    return res;
 }
 
 /* --------------------- Helper functions ---------------------*/
