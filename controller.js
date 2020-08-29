@@ -11,7 +11,7 @@ const storeSocket = (socket) => {
     var newPlayer = new player.Player();
     socketsList.push(socket);
     playersList.push(newPlayer);
-    console.log("New Client!\n");
+    console.log("New Client!");
 }
 
 /*  Remove the corresponding socket and player object from the list upon disconnection   */
@@ -19,7 +19,7 @@ const deleteSocket = (socket) => {
     let i = getSocketIndex(socket);
     socketsList.splice(i, 1);
     playersList.splice(i, 1);
-    console.log("Removed client's socket\n");
+    console.log("Removed client's socket ", i);
 }
 
 /*  Create a room based on the socket and set the associated player object's name to input name. 
@@ -28,10 +28,10 @@ const deleteSocket = (socket) => {
 const createRoom = (socket, name) => {
     let i = getSocketIndex(socket);
     playersList[i].setName(name);
-    var code = crypto.randomBytes(5).toString("Hex");
+    var code = crypto.randomBytes(3).toString("Hex");
     for (let j = 0; j < roomsList.length; j++) {
         if (roomsList[j].code === code) {
-            code = crypto.randomBytes(1).toString("Dec");
+            code = crypto.randomBytes(3).toString("Hex");
         }
     }
     console.log("Code: ", code);
@@ -68,7 +68,6 @@ const preventDuplicateName = (name, roomId) => {
     }
     return name;
 }
-
 
 const getSocketIndex = (socket) => {
     for (let i = 0; i < socketsList.length; i++) {
