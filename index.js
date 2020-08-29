@@ -30,7 +30,7 @@ io.on("connect", (socket) => {
         socket.emit("join room", response);
         if (response.status !== "Failed") {
             // A notification message to all other players in the same room
-            socket.to(code).emit("new player", response); 
+            socket.to(code).emit("new player", response.name); 
         }
     })
 });
