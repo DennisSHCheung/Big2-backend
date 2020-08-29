@@ -1,7 +1,12 @@
 class Player {
-    constructor() {
+    constructor(socket) {
         this.username = "";
+        this.socket = socket;
         this.hand = [];
+    }
+
+    getSocket() {
+        return this.socket;
     }
 
     getName() {
