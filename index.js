@@ -31,7 +31,7 @@ io.on("connect", (socket) => {
         socket.emit("join room", clientRes);
         if (joinRes.status !== "Failed") {
             // A notification message to all other players in the same room
-            socket.to(joinRes.code).emit("new player", joinRes.name); 
+            socket.to(joinRes.code).emit("new player", socket.name); 
         }
     });
 
