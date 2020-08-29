@@ -3,21 +3,18 @@ const player = require("./model/player");
 const room = require("./model/room");
 
 var playersList = [];
-var socketsList = [];
 var roomsList = [];
 
 /*  Create a default player for the user and store both the socket and the player upon initial connection   */
 const storeSocket = (socket) => {
-    var newPlayer = new player.Player();
-    socketsList.push(socket);
+    var newPlayer = new player.Player(socket);
     playersList.push(newPlayer);
     console.log("New Client!");
 }
 
 /*  Remove the corresponding socket and player object from the list upon disconnection   */
 const deleteSocket = (socket) => {
-    let i = getSocketIndex(socket);
-    socketsList.splice(i, 1);
+    let i = getPlayerIndex(socket);
     playersList.splice(i, 1);
     console.log("Removed client's socket ", i);
 }
@@ -26,7 +23,7 @@ const deleteSocket = (socket) => {
     Create a random code for the room code and it is checked to prevent duplicates. 
     Create a socket room provided by socket io to emit messages only to players in the same room */
 const createRoom = (socket, name) => {
-    let i = getSocketIndex(socket);
+    let i = getPlayerIndex(socket);
     playersList[i].setName(name);
     var code = crypto.randomBytes(3).toString("Hex");
     for (let j = 0; j < roomsList.length; j++) {
@@ -47,7 +44,7 @@ const joinRoom = (socket, msg) => {
     let { name, code } = msg;
     let i = getRoomIndex(code);
     if (i === -1) return "Failed";  // Room code does not exist
-    let j = getSocketIndex(socket);
+    let j = getPlayerndex(socket);
     name = preventDuplicateName(name, i);
 
     if (roomsList[i].isFull()) return "Failed";
@@ -69,9 +66,9 @@ const preventDuplicateName = (name, roomId) => {
     return name;
 }
 
-const getSocketIndex = (socket) => {
-    for (let i = 0; i < socketsList.length; i++) {
-        if (socketsList[i] === socket) {
+const getPlayerIndex = (socket) => {
+    for (let i = 0; i < playersList.length; i++) {
+        if (playersList[i].getSocket() === socket) {
             return i;
         }
     }
