@@ -31,7 +31,7 @@ io.on("connect", (socket) => {
 
     /*  Called when the user attempts to leave a room   */
     socket.on("leave room", (msg) => {
-        socket.emit("leave room", controller.leaveRoom(socket, msg));
+        socket.emit("leave room", controller.leaveRoom(socket));
     });
 });
 
