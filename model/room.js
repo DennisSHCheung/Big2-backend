@@ -9,6 +9,10 @@ class Room {
         return this.code;
     }
 
+    isEmpty() {
+        return this.socketsList.length === 0;
+    }
+
     getNames() {
         var names = [];
         for (let i = 0; i < this.socketsList.length; i++) {

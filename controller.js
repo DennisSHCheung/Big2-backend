@@ -7,11 +7,17 @@ var roomsList = [];
 const initSocket = (socket) => {
     socket.name = "";
     socket.hand = [];
+    socket.roomCode = "";
     console.log("New Client!");
 }
 
 /*  Remove the corresponding socket from the list upon disconnection   */
 const deleteSocket = (socket) => {
+    // if (socket.roomCode !== "") {
+    //     let i = getRoomIndex(socket.roomCode);
+    //     let req = { name: socket.name, code: socket.roomCode };
+    //     leaveRoom(socket, req);
+    // }
     console.log("Removed a client's socket");
 }
 
@@ -21,6 +27,7 @@ const createRoom = (socket, name) => {
     socket.name = name;
     let code = getUniqueCode(crypto.randomBytes(3).toString("Hex"));
     roomsList.push(new room.Room(code, socket));
+    socket.roomCode = code;
     socket.join(code);  // Create a socket room based on the code
 
     let res = { status: "Ok", code: code };
@@ -45,6 +52,7 @@ const joinRoom = (socket, msg) => {
     name = getUniqueName(name, i);
     socket.name = name;
     roomsList[i].joinRoom(socket);
+    socket.roomCode = code;
     socket.join(code, () => {   // Join a socket room based on the code
         socket.to(code).emit("new player", name);   // Send a notification to players in the room
     });  
