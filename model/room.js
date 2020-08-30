@@ -41,15 +41,14 @@ class Room {
         this.socketsList.push(socket);
     }
 
-    // leaveRoom(player) {
-    //     for (let i = 0; i < this.playersList.length; i++) {
-    //         if (player.getName() === this.playersList[i].getName()) {
-    //             this.playersList.splice(i, 1);
-    //             return "Ok";
-    //         }
-    //     }
-    //     return "Failed";
-    // }
+    leaveRoom(socket) {
+        for (let i = 0; i < this.socketsList.length; i++) {
+            if (this.socketsList[i].id === socket.id) {
+                this.socketsList.splice(i, 1);
+                return;
+            }
+        }
+    }
 }
 
 module.exports = {

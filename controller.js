@@ -13,11 +13,8 @@ const initSocket = (socket) => {
 
 /*  Remove the corresponding socket from the list upon disconnection   */
 const deleteSocket = (socket) => {
-    // if (socket.roomCode !== "") {
-    //     let i = getRoomIndex(socket.roomCode);
-    //     let req = { name: socket.name, code: socket.roomCode };
-    //     leaveRoom(socket, req);
-    // }
+    leaveRoom(socket);
+    console.log(roomsList.length);
     console.log("Removed a client's socket");
 }
 
@@ -37,9 +34,13 @@ const createRoom = (socket, name) => {
 /*  Join room and the socket room if room code exists. 
     Also check input name against players' names in the room to avoid duplication.  */
 const joinRoom = (socket, msg) => {
-    let { name, code } = msg;
     let res = { status: "Failed", name: [] };
+    if (socket.roomCode !== "") {
+        res.name.push("Already in a room");
+        return res;
+    }
 
+    let { name, code } = msg;
     let i = getRoomIndex(code);
     if (i === -1) {
         res.name.push("Does not exist");
@@ -49,22 +50,12 @@ const joinRoom = (socket, msg) => {
         return res;
     }
 
-    // Prevent socket from joining a room that it is already in
-    let socketsInRoom = roomsList[i].getSockets();
-    for (let k = 0; k < socketsInRoom.length; k++) {
-        if (socket.id === socketsInRoom[k].id) {
-            res.name.push("Already in room");
-            return res;
-        }
-    }
-
     name = getUniqueName(name, i);
     socket.name = name;
     roomsList[i].joinRoom(socket);
     socket.roomCode = code;
-    socket.join(code, () => {   // Join a socket room based on the code
-        socket.to(code).emit("new player", name);   // Send a notification to players in the room
-    });  
+    socket.join(code);   // Join a socket room based on the code
+    socket.to(code).emit("new player", name);   // Send a notification to players in the room
 
     res.status = "Ok";
     res.name = roomsList[i].getNames();
@@ -73,21 +64,21 @@ const joinRoom = (socket, msg) => {
 
 /*  Leave room and socket room if room code exists.
     Remove the room from roomsList if there are no more active players in the room  */
-// const leaveRoom = (socket, msg) => {
-//     let { name, code } = msg;
-//     let i = getRoomIndex(code);
-//     if (i === -1) {
-//         return "Failed";
-//     }
+const leaveRoom = (socket) => {
+    if (socket.roomCode === "") return "Failed";
 
-//     let j = getPlayerIndex(socket);
-//     roomsList[i].leaveRoom(playersList[j]);
-//     if (roomsList[i].getRoomSize() === 0) { // No more active players in the room
-//         roomsList.splice(i, 1);
-//     }
-//     socket.leave(code);
-//     return "Ok";
-// }
+    let i = getRoomIndex(socket.roomCode);
+    roomsList[i].leaveRoom(socket);
+    socket.to(socket.roomCode).emit("player left", socket.name);
+    socket.leave(socket.roomCode);
+    socket.roomCode = "";
+
+    if (roomsList[i].isEmpty()) { // No more active players in the room
+        roomsList.splice(i, 1);
+    }
+
+    return "Ok";
+}
 
 /* --------------------- Helper functions ---------------------*/
 const getUniqueName = (name, roomId) => {
@@ -124,5 +115,6 @@ module.exports = {
     initSocket,
     deleteSocket,
     createRoom,
-    joinRoom
+    joinRoom,
+    leaveRoom
 }
