@@ -19,7 +19,7 @@ const deleteSocket = (socket) => {
     Create a socket room provided by socket io  */
 const createRoom = (socket, name) => {
     socket.name = name;
-    let code = preventDuplicateCode(crypto.randomBytes(3).toString("Hex"));
+    let code = getUniqueCode(crypto.randomBytes(3).toString("Hex"));
     roomsList.push(new room.Room(code, socket));
     socket.join(code);  // Create a socket room based on the code
 
@@ -42,7 +42,7 @@ const joinRoom = (socket, msg) => {
         return res;
     }
 
-    name = preventDuplicateName(name, i);
+    name = getUniqueName(name, i);
     socket.name = name;
     roomsList[i].joinRoom(socket);
     socket.join(code, () => {   // Join a socket room based on the code
@@ -73,22 +73,22 @@ const joinRoom = (socket, msg) => {
 // }
 
 /* --------------------- Helper functions ---------------------*/
-const preventDuplicateName = (name, roomId) => {
+const getUniqueName = (name, roomId) => {
     let names = roomsList[roomId].getNames();
     for (let i = 0; i < names.length; i++) {
         if (name === names[i]) {
             name += "1";
-            preventDuplicateName(name, roomId);
+            getUniqueName(name, roomId);
         }
     }
     return name;
 }
 
-const preventDuplicateCode = (code) => {
+const getUniqueCode = (code) => {
     for (let j = 0; j < roomsList.length; j++) {
         if (roomsList[j].code === code) {
             code = crypto.randomBytes(3).toString("Hex");
-            preventDuplicateCode(code);
+            getUniqueCode(code);
         }
     }
     return code;
