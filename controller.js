@@ -49,6 +49,15 @@ const joinRoom = (socket, msg) => {
         return res;
     }
 
+    // Prevent socket from joining a room that it is already in
+    let socketsInRoom = roomsList[i].getSockets();
+    for (let k = 0; k < socketsInRoom.length; k++) {
+        if (socket.id === socketsInRoom[k].id) {
+            res.name.push("Already in room");
+            return res;
+        }
+    }
+
     name = getUniqueName(name, i);
     socket.name = name;
     roomsList[i].joinRoom(socket);

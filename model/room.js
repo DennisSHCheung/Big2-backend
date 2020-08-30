@@ -1,8 +1,16 @@
+const logic = require("./logic");
+
 class Room {
     constructor(code, socket) {
         this.code = code;
         this.socketsList = [];
         this.socketsList.push(socket);
+        this.deck = [];
+        logic.initDeck(this.deck);
+    }
+
+    newGame() {
+        logic.shuffleDeck(deck);
     }
 
     getCode() {
@@ -13,10 +21,14 @@ class Room {
         return this.socketsList.length === 0;
     }
 
+    getSockets() {
+        return this.socketsList;
+    }
+
     getNames() {
         var names = [];
         for (let i = 0; i < this.socketsList.length; i++) {
-            names.push(this.playersList[i].name);
+            names.push(this.socketsList[i].name);
         }
         return names;
     }
