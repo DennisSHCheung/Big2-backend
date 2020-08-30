@@ -9,10 +9,6 @@ class Room {
         return this.code;
     }
 
-    getRoomSize() {
-        return this.socketsList.length;
-    }
-
     getNames() {
         var names = [];
         for (let i = 0; i < this.socketsList.length; i++) {
@@ -25,7 +21,7 @@ class Room {
         return this.socketsList.length === 4;
     }
 
-    joinRoom(soket) {
+    joinRoom(socket) {
         this.socketsList.push(socket);
     }
 

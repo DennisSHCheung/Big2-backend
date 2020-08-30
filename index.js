@@ -26,13 +26,7 @@ io.on("connect", (socket) => {
 
     /*  Called when the user attempts to join a room  */
     socket.on("join room", (msg) => {
-        let joinRes = controller.joinRoom(msg);
-        let clientRes = { status: joinRes.status, name: joinRes.name }
-        socket.emit("join room", clientRes);
-        if (joinRes.status !== "Failed") {
-            // A notification message to all other players in the same room
-            socket.to(joinRes.code).emit("new player", socket.name); 
-        }
+        socket.emit("join room", controller.joinRoom(msg));
     });
 
     /*  Called when the user attempts to leave a room   */
