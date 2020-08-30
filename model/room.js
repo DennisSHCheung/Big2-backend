@@ -21,6 +21,10 @@ class Room {
         return this.socketsList.length === 0;
     }
 
+    getSockets() {
+        return this.socketsList;
+    }
+
     getNames() {
         var names = [];
         for (let i = 0; i < this.socketsList.length; i++) {
