@@ -1,8 +1,12 @@
+const logic = require("./logic");
+
 class Room {
     constructor(code, socket) {
         this.code = code;
         this.socketsList = [];
         this.socketsList.push(socket);
+        this.deck = [];
+        logic.initDeck(this.deck);
     }
 
     getCode() {
