@@ -19,13 +19,10 @@ const deleteSocket = (socket) => {
     Create a socket room provided by socket io  */
 const createRoom = (socket, name) => {
     socket.name = name;
-    var code = crypto.randomBytes(3).toString("Hex");
-    code = preventDuplicateCode(code);
-
-    console.log("Code: ", code);
-    var newRoom = new room.Room(code, socket);
-    roomsList.push(newRoom);
+    let code = preventDuplicateCode(crypto.randomBytes(3).toString("Hex"));
+    roomsList.push(new room.Room(code, socket));
     socket.join(code);  // Create a socket room based on the code
+
     let res = { status: "Ok", code: code };
     return res;
 }
@@ -34,7 +31,7 @@ const createRoom = (socket, name) => {
     Also check input name against players' names in the room to avoid duplication.  */
 const joinRoom = (socket, msg) => {
     let { name, code } = msg;
-    let res = { status: "Failed", code: code, name: [] };
+    let res = { status: "Failed", name: [] };
 
     let i = getRoomIndex(code);
     if (i === -1) {
@@ -48,7 +45,10 @@ const joinRoom = (socket, msg) => {
     name = preventDuplicateName(name, i);
     socket.name = name;
     roomsList[i].joinRoom(socket);
-    socket.join(code);  // Joins a socket room based on the code
+    socket.join(code, () => {   // Join a socket room based on the code
+        socket.to(code).emit("new player", name);   // Send a notification to players in the room
+    });  
+
     res.status = "Ok";
     res.name = roomsList[i].getNames();
     return res;
