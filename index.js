@@ -26,7 +26,7 @@ io.on("connect", (socket) => {
 
     /*  Called when the user attempts to join a room  */
     socket.on("join room", (msg) => {
-        socket.emit("join room", controller.joinRoom(msg));
+        socket.emit("join room", controller.joinRoom(socket, msg));
     });
 
     /*  Called when the user attempts to leave a room   */
