@@ -24,7 +24,7 @@ class Room {
     getNames() {
         var names = [];
         for (let i = 0; i < this.socketsList.length; i++) {
-            names.push(this.playersList[i].name);
+            names.push(this.socketsList[i].name);
         }
         return names;
     }
