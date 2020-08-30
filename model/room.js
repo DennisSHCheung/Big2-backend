@@ -9,6 +9,10 @@ class Room {
         logic.initDeck(this.deck);
     }
 
+    newGame() {
+        logic.shuffleDeck(deck);
+    }
+
     getCode() {
         return this.code;
     }
