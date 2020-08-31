@@ -80,6 +80,17 @@ const leaveRoom = (socket) => {
     return "Ok";
 }
 
+const startGame = (socket) => {
+    let i = getRoomIndex(socket.roomCode);
+    startingSocket = this.roomsList[i].newGame();
+    let roomSockets = this.roomsList[i].getSockets();
+    for (let j = 0; j < 4; j++) {
+        let isMyTurn = false;
+        if (startingSocket === j) isMyTurn = true;
+        roomSockets[j].emit("start game", { hand: roomsSockets[j].hand, isMyTurn: isMyTurn });
+    }
+}
+
 /* --------------------- Helper functions ---------------------*/
 const getUniqueName = (name, roomId) => {
     let names = roomsList[roomId].getNames();

@@ -7,10 +7,17 @@ class Room {
         this.socketsList.push(socket);
         this.deck = [];
         logic.initDeck(this.deck);
+        this.diamondThreeIndex = 41;
     }
 
     newGame() {
-        logic.shuffleDeck(deck);
+        logic.shuffleDeck(deck, diamondThreeIndex);
+        let j = 0;
+        for (let i = 0; i < 4; i++) {
+            this.socketsList[i].hand = this.deck.slice(j, j + 13);
+            j += 13;
+        }
+        return this.diamondThreeIndex;
     }
 
     getCode() {
