@@ -7,17 +7,25 @@ class Room {
         this.socketsList.push(socket);
         this.deck = [];
         logic.initDeck(this.deck);
-        this.diamondThreeIndex = 41;
+        this.startIndex = 41;
+        this.turnIndex = 0;
+        this.inGame = false;
     }
 
     newGame() {
-        logic.shuffleDeck(deck, diamondThreeIndex);
+        this.inGame = true;
+        logic.shuffleDeck(this.deck, this.startIndex);
         let j = 0;
         for (let i = 0; i < 4; i++) {
             this.socketsList[i].hand = this.deck.slice(j, j + 13);
             j += 13;
         }
-        return this.diamondThreeIndex;
+        this.turnIndex = Math.floor(this.startIndex / 13);
+        return this.turnIndex;
+    }
+
+    isInGame() {
+        return this.inGame;
     }
 
     getCode() {
@@ -49,6 +57,7 @@ class Room {
     }
 
     leaveRoom(socket) {
+        this.inGame = false;
         for (let i = 0; i < this.socketsList.length; i++) {
             if (this.socketsList[i].id === socket.id) {
                 this.socketsList.splice(i, 1);

@@ -27,8 +27,7 @@ const createRoom = (socket, name) => {
     socket.roomCode = code;
     socket.join(code);  // Create a socket room based on the code
 
-    let res = { status: "Ok", code: code };
-    return res;
+    return code;
 }
 
 /*  Join room and the socket room if room code exists. 
@@ -65,7 +64,7 @@ const joinRoom = (socket, msg) => {
 /*  Leave room and socket room if room code exists.
     Remove the room from roomsList if there are no more active players in the room  */
 const leaveRoom = (socket) => {
-    if (socket.roomCode === "") return "Failed";
+    if (socket.roomCode === "") return;
 
     let i = getRoomIndex(socket.roomCode);
     roomsList[i].leaveRoom(socket);
@@ -76,18 +75,16 @@ const leaveRoom = (socket) => {
     if (roomsList[i].isEmpty()) { // No more active players in the room
         roomsList.splice(i, 1);
     }
-
-    return "Ok";
 }
 
+/*  Start game by distrubing hands to sockets and returning which socket to start   */
 const startGame = (socket) => {
     let i = getRoomIndex(socket.roomCode);
-    startingSocket = this.roomsList[i].newGame();
-    let roomSockets = this.roomsList[i].getSockets();
+    if (roomsList[i].isInGame()) return;    // Ignore duplicate requests of starting game
+    startingIndex = roomsList[i].newGame();
+    let roomSockets = roomsList[i].getSockets();
     for (let j = 0; j < 4; j++) {
-        let isMyTurn = false;
-        if (startingSocket === j) isMyTurn = true;
-        roomSockets[j].emit("start game", { hand: roomsSockets[j].hand, isMyTurn: isMyTurn });
+        roomSockets[j].emit("start game", { hand: roomSockets[j].hand, turn: startingIndex });
     }
 }
 
@@ -127,5 +124,6 @@ module.exports = {
     deleteSocket,
     createRoom,
     joinRoom,
-    leaveRoom
+    leaveRoom,
+    startGame
 }

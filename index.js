@@ -30,9 +30,10 @@ io.on("connect", (socket) => {
     });
 
     /*  Called when the user attempts to leave a room   */
-    socket.on("leave room", (msg) => {
-        socket.emit("leave room", controller.leaveRoom(socket));
-    });
+    socket.on("leave room", (msg) => controller.leaveRoom(socket));
+
+    /*  Called when the user clicks the start game button */
+    socket.on("start game", (msg) => controller.startGame(socket));
 });
 
 router.get('/', (req, res) => { return res.status(200); });
