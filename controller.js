@@ -81,9 +81,10 @@ const leaveRoom = (socket) => {
 const startGame = (socket) => {
     let i = getRoomIndex(socket.roomCode);
     if (roomsList[i].isInGame()) return;    // Ignore duplicate requests of starting game
-    startingIndex = roomsList[i].newGame();
     let roomSockets = roomsList[i].getSockets();
-    for (let j = 0; j < 4; j++) {
+    if (roomSockets.length !== 2 || roomSockets.length !== 4) return;   // Can only start with even number of players
+    startingIndex = roomsList[i].newGame();
+    for (let j = 0; j < roomSockets.length; j++) {
         roomSockets[j].emit("start game", { hand: roomSockets[j].hand, turn: startingIndex });
     }
 }

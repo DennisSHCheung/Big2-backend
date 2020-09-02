@@ -16,11 +16,13 @@ class Room {
         this.inGame = true;
         logic.shuffleDeck(this.deck, this.startIndex);
         let j = 0;
-        for (let i = 0; i < 4; i++) {
-            this.socketsList[i].hand = this.deck.slice(j, j + 13);
-            j += 13;
+        let numOfCards = 13;
+        if (this.socketsList.length === 2) numOfCards = 26;
+        for (let i = 0; i < this.socketsList.length; i++) {
+            this.socketsList[i].hand = this.deck.slice(j, j + numOfCards);
+            j += numOfCards;
         }
-        this.turnIndex = Math.floor(this.startIndex / 13);
+        this.turnIndex = Math.floor(this.startIndex / numOfCards);
         return this.turnIndex;
     }
 
