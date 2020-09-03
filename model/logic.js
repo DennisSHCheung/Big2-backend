@@ -17,6 +17,7 @@ const shuffleDeck = (deck, startIndex) => {
         deck[j] = deck[k];
         deck[k] = card;
 	}
+	return startIndex;
 }
 
 module.exports = {

@@ -14,7 +14,7 @@ class Room {
 
     newGame() {
         this.inGame = true;
-        logic.shuffleDeck(this.deck, this.startIndex);
+        this.startIndex = logic.shuffleDeck(this.deck, this.startIndex);
         let j = 0;
         let numOfCards = 13;
         if (this.socketsList.length === 2) numOfCards = 26;
@@ -23,6 +23,7 @@ class Room {
             j += numOfCards;
         }
         this.turnIndex = Math.floor(this.startIndex / numOfCards);
+        console.log(this.startIndex);
         return this.turnIndex;
     }
 
