@@ -89,6 +89,12 @@ const startGame = (socket) => {
     }
 }
 
+const playTurn = (socket, cards) => {
+    let i = getRoomIndex(socket.roomCode);
+    let turnIndex = roomsList[i].nextTurn();
+    socket.to(socket.roomCode).emit("play turn", { cards: cards, turn: turnIndex });
+}
+
 /* --------------------- Helper functions ---------------------*/
 const getUniqueName = (name, roomId) => {
     let names = roomsList[roomId].getNames();
@@ -126,5 +132,6 @@ module.exports = {
     createRoom,
     joinRoom,
     leaveRoom,
-    startGame
+    startGame,
+    playTurn
 }

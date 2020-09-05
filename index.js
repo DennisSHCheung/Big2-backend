@@ -34,6 +34,9 @@ io.on("connect", (socket) => {
 
     /*  Called when the user clicks the start game button */
     socket.on("start game", (msg) => controller.startGame(socket));
+
+    /*  Called a player plays his hand  */
+    socket.on("play turn", (cards) => controller.playTurn(socket, cards));
 });
 
 router.get('/', (req, res) => { return res.status(200); });

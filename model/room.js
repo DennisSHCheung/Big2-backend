@@ -27,6 +27,12 @@ class Room {
         return this.turnIndex;
     }
 
+    nextTurn() {
+        if (this.turnIndex === this.socketsList.length - 1) this.turnIndex = 0;
+        else this.turnIndex++;
+        return this.turnIndex;
+    }
+
     isInGame() {
         return this.inGame;
     }
